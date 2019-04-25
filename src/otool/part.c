@@ -4,15 +4,15 @@
 void print_otool(char *ptr, struct section_64 *section, int offset, int size)
 {
 	int i;
-	uint64_t addr;
+	int tmp[1];
 
 	i = 0;
 	while (i < size)
 	{
 		if (!(i & 15))
 		{
-			addr = i + section->addr;
-			putnb(&(addr), "\t");
+			*tmp = i + section->addr;
+			putnb(tmp, "\t");
 		}
 		ft_putchar_hex(*(ptr + offset + i));
 		ft_putchar(' ');
