@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 02:19:19 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/04/25 02:31:27 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/04/26 01:53:35 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,66 +16,84 @@
 #include <stdlib.h>
 
 
-void putnb(int *number, char *str)
+void putnb(unsigned long long *number, char *str, char _64)
 {
 	char *ret;
-	char *ret_2;
 
-	if (str && *str == '\t')
-		ret = NULL;
-	else
-		ret = ft_itoabase(*(number + 1) , "0123456789abcdef");
-	ret_2 = ft_itoabase(*number, "0123456789abcdef");
-	if (!ret)
-		write(1, "0000000000000000", 16 - ft_strlen(ret_2));
-	else if (ft_strlen(ret) < 2)
-		write(1, "0000000000000000", 15 - ft_strlen(ret_2));
-	else
-		write(1, "0000000000000000", 8 - ft_strlen(ret));
+	ret = ft_itoabase(*number, "0123456789abcdef");
+	write(1, "0000000000000000", 16 - _64 - ft_strlen(ret));
 	ft_putstr(ret);
-	ft_putstr(ret_2);
 	ft_putstr(str);
 	free(ret);
-	free(ret_2);
 }
 
-void set_segment(struct segment_command_64  *segment, void *ptr)
+int get_number_segment(int n)
+{
+	static int number = 0;
+
+	if (n == -1)
+		number = 0;
+	else
+		number += n;
+	return (number);
+}
+
+void set_segment_32(struct segment_command *segment, void *ptr)
+{
+	struct section *section;
+	struct section *section_tmp;
+	int i;
+	int j;
+	int merde;
+
+	merde = get_number_segment(0);
+	section = (void *)segment + (sizeof(segment) + 1) * 8;
+	i = -1;
+	while (++i < segment->nsects)
+	{
+		j = -1;
+		section_tmp = (void *)segment + (sizeof(segment) + 1) * 8;
+		while (++j < i)
+		{
+			if (((section_tmp->addr < section->addr)
+				&& ((section_tmp->addr + section_tmp->size) > section->addr))
+				|| ((section->addr < section_tmp->addr)
+				&& ((section->addr + section->size) > section_tmp->addr)))
+				handle_error("(section contents at offset");
+			section_tmp++;
+		}
+		nmotool_part((void *)section, i + merde, ptr, 8);//one or one
+		section++;
+	}
+	get_number_segment(i);
+}
+
+void set_segment_64(struct segment_command_64  *segment, void *ptr)
 {
 	struct section_64 *section;
 	struct section_64 *section_tmp;
 	int i;
 	int j;
+	int merde;
 
+	merde = get_number_segment(0);
 	section = (void *)segment + (sizeof(segment) + 1) * 8;
-	i = 0;
-
-	while (i < segment->nsects)
+	i = -1;
+	while (++i < segment->nsects)
 	{
-		j = 0;
+		j = -1;
 		section_tmp = (void *)segment + (sizeof(segment) + 1) * 8;
-		while (j < i)
+		while (++j < i)
 		{
 			if (((section_tmp->addr < section->addr)
-						&& ((section_tmp->addr + section_tmp->size) > section->addr))
-					|| ((section->addr < section_tmp->addr)
-						&& ((section->addr + section->size) > section_tmp->addr)))
+				&& ((section_tmp->addr + section_tmp->size) > section->addr))
+				|| ((section->addr < section_tmp->addr)
+				&& ((section->addr + section->size) > section_tmp->addr)))
 				handle_error("(section contents at offset");
-
 			section_tmp++;
-			j++;
 		}
-
-
-
-	
-		nmotool_part(section, i, ptr);//one or one
-	
-		
-
-
-
-
+		nmotool_part((void *)section, i + merde, ptr, 0);//one or one
 		section++;
-		++i;
 	}
+	get_number_segment(i);
 }

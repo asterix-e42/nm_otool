@@ -1,10 +1,10 @@
 #include "libft.h"
 #include "nm_otool.h"
 
-void print_otool(char *ptr, struct section_64 *section, int offset, int size)
+void print_otool_64(char *ptr, struct section_64 *section, int offset, int size)
 {
 	int i;
-	int tmp[1];
+	unsigned long long tmp[1];
 
 	i = 0;
 	while (i < size)
@@ -12,7 +12,29 @@ void print_otool(char *ptr, struct section_64 *section, int offset, int size)
 		if (!(i & 15))
 		{
 			*tmp = i + section->addr;
-			putnb(tmp, "\t");
+			putnb(tmp, "\t", 0);
+		}
+		ft_putchar_hex(*(ptr + offset + i));
+		ft_putchar(' ');
+		i++;
+		if (!(i & 15))
+			ft_putchar('\n');
+	}
+	if ((i & 15))
+		ft_putchar('\n');
+}
+void print_otool_32(char *ptr, struct section *section, int offset, int size)
+{
+	int i;
+	unsigned long long tmp[1];
+
+	i = 0;
+	while (i < size)
+	{
+		if (!(i & 15))
+		{
+			*tmp = (unsigned long long)(i + section->addr);
+			putnb(tmp, "\t", 8);
 		}
 		ft_putchar_hex(*(ptr + offset + i));
 		ft_putchar(' ');
@@ -24,18 +46,16 @@ void print_otool(char *ptr, struct section_64 *section, int offset, int size)
 		ft_putchar('\n');
 }
 
-void	nmotool_part(struct section_64 *section, int i, char *ptr)
+void	nmotool_part(struct section_64 *section, int i, char *ptr, char is_64)
 {
 		if (!ft_strcmp(section->segname,  "__TEXT")
 				&& !ft_strcmp(section->sectname, "__text"))
 		{
 			ft_putendl("Contents of (__TEXT,__text) section");//
-
-
-
-			print_otool(ptr, section, section->offset, section->size);
-
-
+			if (!is_64)
+				print_otool_64(ptr, section, section->offset, section->size);
+			else
+				print_otool_32(ptr, (struct section *)section, section->offset, section->size);
 
 		}
 		else if (!ft_strcmp(section->segname,  "__BSS")

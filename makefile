@@ -6,7 +6,7 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/04/24 20:52:09 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/04/26 02:05:12 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRCDIR = ./src
 INCDIR = -I./include -I./libft/include
 
 
-NM_OTOOL = error.o segment.o mach_o.o main.o
+NM_OTOOL = error.o segment.o mach_o.o main.o endian.o
 NM = test.o output.o part.o get_symbol_letter.o
 OTOOL = test.o part.o
 LIB = libft/libft.a
@@ -109,7 +109,7 @@ auteur:
 
 fclean: clean
 	@$(MAKE) fclean -C ./libft
-	@rm -f $(NAME) $(NAMELIB) libft_malloc.so
+	@rm -f $(NAME_NM) $(NAME_OTOOL)
 	@echo $(GREEN)"tout est clean"$(NO_COLOR)
 
 re: fclean

@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #include "nm_otool.h"
 
-void handle_64(char *ptr, struct stat buf)
+void handle_64(char *ptr, struct stat buf, char *av, int pute)
 {
 	int		ncmds;
 	int		i;
@@ -16,7 +16,12 @@ void handle_64(char *ptr, struct stat buf)
 	struct load_command	*lc_tmp;
 	struct symtab_command	*sym;
 
-	printf("dfs\n");
+	if (pute > 2)
+	{
+		ft_putendl("");
+		ft_putstr(av);
+		ft_putendl(":");
+	}
 	header = (struct mach_header_64 *) ptr;
 	ncmds = header->ncmds;
 	lc = (void *)ptr + sizeof(*header);
@@ -24,16 +29,16 @@ void handle_64(char *ptr, struct stat buf)
 	for(i = 0; i < ncmds; ++i)
 	{
 		
-		if (lc->cmd == LC_SEGMENT_64)// nm symbol
+		if (lc->cmd == LC_SEGMENT_64)
 		{
-			set_segment(lc, ptr);		
+			set_segment_64((struct segment_command_64 *)lc, ptr);		
 		}
-		if (lc->cmd == LC_SYMTAB)// nm interet !!
+		else if (lc->cmd == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
 			if(sym->strsize + sym->stroff > buf.st_size)
-				handle_error("truncated or malformed object (stroff field plus strsize field of LC_SYMTAB command 2 extends past the end of the file)");
-			print_output_sort(sym->nsyms, sym->symoff, sym->stroff, ptr, buf);
+				handle_error("truncated or malformed objet");
+			print_output_sort(sym->nsyms, sym->symoff, sym->stroff, ptr, buf, 0);
 			break;
 		}
 		lc = (void *)lc + lc->cmdsize;
