@@ -1,20 +1,17 @@
-
-
-
 #include "nm_otool.h"
 
-uint16_t endian2(uint16_t nb)
+uint16_t	endian2(uint16_t nb)
 {
 	return (((nb & 0x00ff) << 8) | ((nb & 0xff00) >> 8));
 }
 
-uint32_t endian4(uint32_t nb)
+uint32_t	endian4(uint32_t nb)
 {
 	return (((nb & 0x000000ff) << 16) | ((nb & 0x0000ff00) >> 8)
 	| ((nb & 0x00ff0000) << 8) | ((nb & 0xff000000) >> 16));
 }
 
-uint64_t endian8(uint64_t nb)
+uint64_t	endian8(uint64_t nb)
 {
 	return (((nb & 0xff00000000000000) >> 56)
 			| ((nb & 0x00ff000000000000) >> 40)

@@ -6,7 +6,7 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/04/26 02:05:12 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/04/27 01:35:15 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,8 +40,7 @@ RED="\x1b[31m"
 GREEN="\x1b[32m"
 YELLOW="\x1b[33m"
 CC = gcc
-CFLAGS = $(INCDIR) 
-#-Wall -Wextra -Werror
+CFLAGS = $(INCDIR) -Wall -Wextra -Werror
 DEBU = -fno-omit-frame-pointer -g
 #-fsanitize=address -fno-omit-frame-pointer -g3
 MAKE = /usr/bin/make

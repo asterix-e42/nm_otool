@@ -7,11 +7,10 @@
 #include <sys/mman.h>
 #include "nm_otool.h"
 
-static void print_output_32(int i, char *stringtable, struct nlist *array)
+static void		print_output_32(int i, char *stringtable, struct nlist *array)
 {
-	char *ret;
-	char symbol;
-	uint64_t tmp;
+	char		symbol;
+	uint64_t	tmp;
 
 	symbol = get_symbol_letter(((struct nlist_64 *)array)[i]);
 	if (symbol == 'U')
@@ -29,10 +28,9 @@ static void print_output_32(int i, char *stringtable, struct nlist *array)
 	ft_putendl(stringtable + array[i].n_un.n_strx);
 }
 
-static void print_output_64(int i, char *stringtable, struct nlist_64 *array)
+static void		print_output_64(int i, char *s_table, struct nlist_64 *array)
 {
-	char *ret;
-	char symbol;
+	char		symbol;
 
 	symbol = get_symbol_letter(array[i]);
 	if (symbol == 'U')
@@ -44,43 +42,35 @@ static void print_output_64(int i, char *stringtable, struct nlist_64 *array)
 	ft_putstr(" ");
 	ft_putchar(symbol);
 	ft_putstr(" ");
-	ft_putendl(stringtable + array[i].n_un.n_strx);
+	ft_putendl(s_table + array[i].n_un.n_strx);
 }
 
-void print_output_sort(int nsyms, int symoff, int stroff, char *ptr, struct stat buf, char _64)
+void			print_output_sort(struct symtab_command *sym, char *ptr,
+		char is_64)
 {
-	int i;
-	int j;
-	int inc_g;
-	int *tmp;
-	char *stringtable;
-	struct nlist_64 *array; //semble identique , nop fini par 64
+	unsigned int	inc[3];
+	int				*tmp;
+	char			*stringtable;
+	struct nlist_64	*array;
 
-
-	tmp = malloc(sizeof(int) * (nsyms + 1));
-
-	stringtable = ptr + stroff;
-	array = (struct nlist_64 *)(ptr + symoff);
-	i = -1;
-	while(++i < nsyms)
-		tmp[i] = i;
-	i = 0;
-	while (i < nsyms)
+	tmp = malloc(sizeof(int) * (sym->nsyms + 1));
+	stringtable = ptr + sym->stroff;
+	array = (struct nlist_64 *)(ptr + sym->symoff);
+	inc[0] = sym->nsyms;
+	while (--inc[0] > 0)
+		tmp[inc[0]] = inc[0];
+	while (++inc[0] < sym->nsyms)
 	{
-		j = 0;
-		inc_g = 0;
-		while(j + i < nsyms)
-		{
-			if(ft_strcmp(stringtable + array[tmp[j]].n_un.n_strx, 
-						stringtable + array[tmp[inc_g]].n_un.n_strx) < 0)
-				inc_g = j;
-			j++;
-		}
-		if (_64)
-			print_output_32(tmp[inc_g], stringtable, (struct nlist *)array);
+		inc[1] = -1;
+		inc[2] = 0;
+		while (++inc[1] + inc[0] < sym->nsyms)
+			if (ft_strcmp(stringtable + array[tmp[inc[1]]].n_un.n_strx,
+						stringtable + array[tmp[inc[2]]].n_un.n_strx) < 0)
+				inc[2] = inc[1];
+		if (is_64)
+			print_output_32(tmp[inc[2]], stringtable, (struct nlist *)array);
 		else
-			print_output_64(tmp[inc_g], stringtable, array);
-		tmp[inc_g] = tmp[j - 1];
-		i++;
+			print_output_64(tmp[inc[2]], stringtable, array);
+		tmp[inc[2]] = tmp[inc[1] - 1];
 	}
 }

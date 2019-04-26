@@ -16,11 +16,10 @@ char		get_symbol_letter(struct nlist_64 array)
 	else if ((array.n_type & N_TYPE) == N_SECT)
 	{
 		letter = *(get_segment() + array.n_sect - 1);
-		letter = (!letter)? 'S' : letter;
+		letter = (!letter) ? 'S' : letter;
 	}
 	else
 		letter = '?';
-
 	if (!(array.n_type & N_EXT) && letter != '?' && letter != '-')
 		letter += 32;
 	return (letter);
