@@ -48,7 +48,7 @@ static void		print_output_64(int i, char *s_table, struct nlist_64 *array)
 void			print_output_sort(struct symtab_command *sym, char *ptr,
 		char is_64)
 {
-	unsigned int	inc[3];
+	int				inc[3];
 	int				*tmp;
 	char			*stringtable;
 	struct nlist_64	*array;
@@ -57,13 +57,13 @@ void			print_output_sort(struct symtab_command *sym, char *ptr,
 	stringtable = ptr + sym->stroff;
 	array = (struct nlist_64 *)(ptr + sym->symoff);
 	inc[0] = sym->nsyms;
-	while (--inc[0] > 0)
+	while (--inc[0] >= 0)
 		tmp[inc[0]] = inc[0];
-	while (++inc[0] < sym->nsyms)
+	while (++inc[0] < (int)sym->nsyms)
 	{
 		inc[1] = -1;
 		inc[2] = 0;
-		while (++inc[1] + inc[0] < sym->nsyms)
+		while (++inc[1] + inc[0] < (int)sym->nsyms)
 			if (ft_strcmp(stringtable + array[tmp[inc[1]]].n_un.n_strx,
 						stringtable + array[tmp[inc[2]]].n_un.n_strx) < 0)
 				inc[2] = inc[1];
