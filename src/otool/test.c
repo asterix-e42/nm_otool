@@ -21,11 +21,11 @@ void	handle_32(char *ptr, struct stat buf, char *av, int pute)
 	lc = (void *)ptr + sizeof(*header);
 	lc_tmp = lc;
 	inc = -1;
-	while (++inc < header->ncmds)
+	while (++inc < endian4(header->ncmds))
 	{
-		if (lc->cmd == LC_SEGMENT)
+		if (endian4(lc->cmd) == LC_SEGMENT)
 			set_segment_32((struct segment_command *)lc, ptr);
-		lc = (void *)lc + lc->cmdsize;
+		lc = (void *)lc + endian4(lc->cmdsize);
 	}
 }
 
@@ -44,10 +44,10 @@ void	handle_64(char *ptr, struct stat buf, char *av, int pute)
 	lc = (void *)ptr + sizeof(*header);
 	lc_tmp = lc;
 	inc = -1;
-	while (++inc < header->ncmds)
+	while (++inc < endian4(header->ncmds))
 	{
-		if (lc->cmd == LC_SEGMENT_64)
+		if (endian4(lc->cmd) == LC_SEGMENT_64)
 			set_segment_64((struct segment_command_64 *)lc, ptr);
-		lc = (void *)lc + lc->cmdsize;
+		lc = (void *)lc + endian4(lc->cmdsize);
 	}
 }

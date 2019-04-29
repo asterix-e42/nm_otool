@@ -19,58 +19,58 @@ static void	print(int p, char *av)
 
 void		handle_32(char *ptr, struct stat buf, char *av, int pute)
 {
-	int						ncmds;
-	int						i;
+	uint32_t				ncmds;
+	uint32_t				inc;
 	struct load_command		*lc;
 	struct load_command		*lc_tmp;
 	struct symtab_command	*sym;
 
 	print(pute, av);
-	ncmds = ((struct mach_header *)ptr)->ncmds;
-	lc = (void *)ptr + sizeof(struct mach_header_64);
+	ncmds = endian4(((struct mach_header *)ptr)->ncmds);
+	lc = (void *)ptr + sizeof(struct mach_header);
 	lc_tmp = lc;
-	i = -1;
-	while (++i < ncmds)
+	inc = -1;
+	while (++inc < ncmds)
 	{
-		if (lc->cmd == LC_SEGMENT)
+		if (endian4(lc->cmd) == LC_SEGMENT)
 			set_segment_32((struct segment_command *)lc, ptr);
-		else if (lc->cmd == LC_SYMTAB)
+		else if (endian4(lc->cmd) == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
-			if (sym->strsize + sym->stroff > buf.st_size)
+			if (endian4(sym->strsize) + endian4(sym->stroff) > buf.st_size)
 				handle_error("truncated or malformed objet");
-			print_output_sort(sym, ptr, 0);
+			print_output_sort_32(sym, ptr);
 			break ;
 		}
-		lc = (void *)lc + lc->cmdsize;
+		lc = (void *)lc + endian4(lc->cmdsize);
 	}
 }
 
 void		handle_64(char *ptr, struct stat buf, char *av, int pute)
 {
-	int						ncmds;
-	int						i;
+	uint32_t				ncmds;
+	uint32_t				inc;
 	struct load_command		*lc;
 	struct load_command		*lc_tmp;
 	struct symtab_command	*sym;
 
 	print(pute, av);
-	ncmds = ((struct mach_header_64 *)ptr)->ncmds;
+	ncmds = endian4(((struct mach_header_64 *)ptr)->ncmds);
 	lc = (void *)ptr + sizeof(struct mach_header_64);
 	lc_tmp = lc;
-	i = -1;
-	while (++i < ncmds)
+	inc = -1;
+	while (++inc < ncmds)
 	{
-		if (lc->cmd == LC_SEGMENT_64)
+		if (endian4(lc->cmd) == LC_SEGMENT_64)
 			set_segment_64((struct segment_command_64 *)lc, ptr);
-		else if (lc->cmd == LC_SYMTAB)
+		else if (endian4(lc->cmd) == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
-			if (sym->strsize + sym->stroff > buf.st_size)
+			if (endian4(sym->strsize) + endian4(sym->stroff) > buf.st_size)
 				handle_error("truncated or malformed objet");
-			print_output_sort(sym, ptr, 0);
+			print_output_sort_64(sym, ptr);
 			break ;
 		}
-		lc = (void *)lc + lc->cmdsize;
+		lc = (void *)lc + endian8(lc->cmdsize);
 	}
 }
