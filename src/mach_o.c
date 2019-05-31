@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mach_o.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
+/*   Updated: 2019/05/30 23:42:36 by tdumouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "libft.h"
@@ -15,14 +27,15 @@ void	archive(void *ptr, struct stat buf, char *av)
 	int				i;
 	char			*aff;
 
-	i = 0;
+	i = -1;
 	archive = ptr + SARMAG;
-	while (*(char *)archive)
+	while (*(char *)archive && (++i >= 0))
 	{
 		jmp = ft_atoi(archive->ar_name + 3);
 		if (ft_strncmp((char *)(archive + 1), SYMDEF, 9))
 		{
-			aff = malloc(jmp + ft_strlen(av) + 3);
+			if (!(aff = malloc(jmp + ft_strlen(av) + 3)))
+				return ;
 			ft_strcpy(aff, av);
 			ft_strcpy(aff + ft_strlen(av), "(");
 			ft_strcpy(aff + ft_strlen(av) + 1, (char *)(archive + 1));
@@ -33,11 +46,10 @@ void	archive(void *ptr, struct stat buf, char *av)
 		}
 		archive = (void *)archive + ft_atoi(archive->ar_size)
 			+ sizeof(struct ar_hdr);
-		i++;
 	}
 }
 
-void	fat_32(void *ptr, struct stat buf, char *av)
+int		fat_32(void *ptr, struct stat buf, char *av)
 {
 	struct fat_arch		*arch;
 	uint32_t			*magic_ptr;
@@ -51,20 +63,21 @@ void	fat_32(void *ptr, struct stat buf, char *av)
 	arch = ptr + sizeof(struct fat_header);
 	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
 	{
+		if (endian4(arch->offset) == 0)
+			return (handle_error("error offset"));
 		magic_ptr = (void *)ptr + endian4(arch->offset);
-		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
-		&& (temp = 1))
-			magic(magic_ptr, buf, av, 1);
-		else if (!temp)
+		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64) &&
+		(temp = 1)) || !temp)
 			magic(magic_ptr, buf, av, 1);
 		arch++;
-		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr
-		== FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM
-		|| *(uint32_t *)ptr == MH_CIGAM_64);
+		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr ==
+		FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM ||
+		*(uint32_t *)ptr == MH_CIGAM_64);
 	}
+	return (EXIT_SUCCESS);
 }
 
-void	fat_64(void *ptr, struct stat buf, char *av)
+int		fat_64(void *ptr, struct stat buf, char *av)
 {
 	struct fat_arch_64	*arch;
 	uint64_t			*magic_ptr;
@@ -78,17 +91,18 @@ void	fat_64(void *ptr, struct stat buf, char *av)
 	arch = ptr + sizeof(struct fat_header);
 	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
 	{
+		if (endian8(arch->offset) == 0)
+			return (handle_error("error offset"));
 		magic_ptr = (void *)ptr + endian8(arch->offset);
-		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
-		&& (temp = 1))
-			magic(magic_ptr, buf, av, 1);
-		else if (!temp)
+		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
+		&& (temp = 1)) || !temp)
 			magic(magic_ptr, buf, av, 1);
 		arch++;
 		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr
 		== FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM
 		|| *(uint32_t *)ptr == MH_CIGAM_64);
 	}
+	return (EXIT_SUCCESS);
 }
 
 void	magic(void *ptr, struct stat buf, char *av, int pute)
@@ -109,7 +123,7 @@ void	magic(void *ptr, struct stat buf, char *av, int pute)
 	else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
 		handle_64(ptr, buf, av, pute);
 	else
-		handle_error("unknown file format");
+		handle_error(("unknown file format"));
 	get_number_segment(-1);
 }
 
@@ -120,14 +134,16 @@ int		make_magic(char *filename, int pute)
 	char		*ptr;
 
 	if ((fd = open(filename, O_RDONLY)) < 0)
-		handle_error("file doesn't exist");
+		return (handle_error("file doesn't exist"));
 	if (fstat(fd, &buf) < 0)
-		handle_error("error file format");
+		return (handle_error("error file format"));
 	if ((ptr = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
-		handle_error("cannot allocated");
+		return (handle_error("cannot allocated"));
 	magic(ptr, buf, filename, pute);
 	if (munmap(ptr, buf.st_size) < 0)
-		handle_error("cannot disallocated");
-	return (1);
+		return (handle_error("cannot disallocated"));
+	if (get_segment(1) == NULL)
+		return (EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }

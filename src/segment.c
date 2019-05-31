@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 02:19:19 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/04/29 23:36:39 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/05/30 23:27:39 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,13 @@ int		get_number_segment(int n)
 	return (number);
 }
 
-void	set_segment_32(struct segment_command *segment, void *ptr)
+/*
+** bug chelou aucune explication
+*/
+
+int		set_segment_32(struct segment_command *segment, void *ptr)
 {
 	struct section	*sec;
-	struct section	*tmp;
 	int				i;
 	int				j;
 	int				merde;
@@ -63,25 +66,19 @@ void	set_segment_32(struct segment_command *segment, void *ptr)
 	i = -1;
 	while (++i < (int)endian4(segment->nsects))
 	{
+		if (i > 10)
+			return (EXIT_FAILURE);
 		j = -1;
-		tmp = (void *)segment + (sizeof(segment) + 1) * 8;
-		while (++j < i
-				&& ++tmp)
-			if (((endian4(tmp->addr) < endian4(sec->addr))
-	&& ((endian4(tmp->addr) + endian4(tmp->size))
-	> endian4(sec->addr))) || ((endian4(sec->addr) < endian4(tmp->addr))
-	&& ((endian4(sec->addr) + endian4(sec->size)) > endian4(tmp->addr))))
-				handle_error("contents at offset");
 		nmotool_part((void *)sec, i + merde, ptr, 8);
 		sec++;
 	}
 	get_number_segment(i);
+	return (EXIT_SUCCESS);
 }
 
-void	set_segment_64(struct segment_command_64 *segment, void *ptr)
+int		set_segment_64(struct segment_command_64 *segment, void *ptr)
 {
 	struct section_64	*sec;
-	struct section_64	*tmp;
 	int					i;
 	int					j;
 	int					merde;
@@ -91,17 +88,12 @@ void	set_segment_64(struct segment_command_64 *segment, void *ptr)
 	i = -1;
 	while (++i < (int)endian4(segment->nsects))
 	{
+		if (i > 10)
+			return (EXIT_FAILURE);
 		j = -1;
-		tmp = (void *)segment + (sizeof(segment)) * 8;
-		while (++j < i
-				&& ++tmp)
-			if (((endian8(tmp->addr) < endian8(sec->addr))
-	&& ((endian8(tmp->addr) + endian8(tmp->size))
-	> endian8(sec->addr))) || ((endian8(sec->addr) < endian8(tmp->addr))
-	&& ((endian8(sec->addr) + endian8(sec->size)) > endian8(tmp->addr))))
-				handle_error("(sec contents at offset");
 		nmotool_part((void *)sec, i + merde, ptr, 0);
 		sec++;
 	}
 	get_number_segment(i);
+	return (EXIT_SUCCESS);
 }

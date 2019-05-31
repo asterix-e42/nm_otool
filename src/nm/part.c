@@ -1,14 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   part.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/30 22:15:33 by tdumouli          #+#    #+#             */
+/*   Updated: 2019/05/30 22:41:00 by tdumouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "nm_otool.h"
 
-char	*get_segment(void)
+char	*get_segment(int reset)
 {
 	static char		*section_letter = NULL;
 
 	if (!section_letter)
 	{
-		section_letter = malloc(sizeof(char) * MAX_SECT);
+		if (!(section_letter = malloc(sizeof(char) * MAX_SECT)))
+			return (NULL);
 		section_letter = ft_memset(section_letter, 0, MAX_SECT);
+	}
+	if (reset)
+	{
+		free(section_letter);
+		section_letter = NULL;
 	}
 	return (section_letter);
 }
@@ -20,7 +38,7 @@ void	nmotool_part(struct section_64 *section, int sect,
 
 	(void)ptr;
 	(void)is_64;
-	section_leter = get_segment();
+	section_leter = get_segment(0);
 	if (!ft_strcmp(section->segname, SEG_TEXT)
 			&& !ft_strcmp(section->sectname, SECT_TEXT))
 		section_leter[sect] = 'T';

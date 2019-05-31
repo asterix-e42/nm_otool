@@ -1,7 +1,20 @@
-#include "nm_otool.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/30 22:16:09 by tdumouli          #+#    #+#             */
+/*   Updated: 2019/05/30 22:16:12 by tdumouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	handle_error(char *s)
+#include "nm_otool.h"
+#include "libft.h"
+
+int		handle_error(char *s)
 {
-	printf("%s\n", s);
-	exit(1);
+	ft_putendl_fd(s, 2);
+	return (EXIT_FAILURE);
 }

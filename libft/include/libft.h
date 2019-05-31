@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/07 05:36:48 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/04/24 21:25:37 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/05/31 16:25:12 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,5 +120,6 @@ int				ft_treeaddfromprev(t_leaf *b, t_leaf *a);
 
 char			*bracket(char *av, char test, char *t1, char *t2);
 int				get_next_line(const int fd, char **line);
+void			*ft_mallocf(size_t size);
 
 #endif

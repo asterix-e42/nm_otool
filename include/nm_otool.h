@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 01:48:05 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/04/29 23:38:06 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/05/30 19:36:42 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,20 @@
 # include <mach-o/loader.h>
 # include <mach-o/fat.h>
 
-void		handle_error(char *s);
+int			handle_error(char *s);
 void		nmotool_part(struct section_64 *sect, int i, char *ptr, char is64);
-char		*get_segment();
+char		*get_segment(int reset);
 void		putnb(uint64_t *number, char *str, char is64);
 void		putnb_32(uint32_t *number, char *str);
-void		set_segment_64(struct segment_command_64 *segment, void *ptr);
-void		set_segment_32(struct segment_command *segment, void *ptr);
+int			set_segment_64(struct segment_command_64 *segment, void *ptr);
+int			set_segment_32(struct segment_command *segment, void *ptr);
 int			make_magic(char *filename, int pute);
-void		print_output_sort_32(struct symtab_command *sym, char *ptr);
-void		print_output_sort_64(struct symtab_command *sym, char *ptr);
-void		handle_64(char *ptr, struct stat buf, char *av, int pute);
-void		handle_32(char *ptr, struct stat buf, char *av, int pute);
+int			print_output_sort_32(struct symtab_command *sym, char *ptr, struct \
+			stat buf);
+int			print_output_sort_64(struct symtab_command *sym, char *ptr, struct \
+			stat buf);
+int			handle_64(void *ptr, struct stat buf, char *av, int pute);
+int			handle_32(void *ptr, struct stat buf, char *av, int pute);
 char		get_symbol_letter_32(struct nlist array);
 char		get_symbol_letter_64(struct nlist_64 array);
 void		endian_mode(char is_endian);

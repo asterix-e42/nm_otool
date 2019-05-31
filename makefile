@@ -6,7 +6,7 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/04/27 01:35:15 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/05/30 22:14:33 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,8 +20,8 @@ INCDIR = -I./include -I./libft/include
 
 
 NM_OTOOL = error.o segment.o mach_o.o main.o endian.o
-NM = test.o output.o part.o get_symbol_letter.o
-OTOOL = test.o part.o
+NM = handle.o output.o part.o get_symbol_letter.o
+OTOOL = handle.o part.o nm.o
 LIB = libft/libft.a
 
 OBJ_NM =	$(addprefix $(OBJDIR)/, $(NM_OTOOL)) \
