@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/30 23:42:36 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/06/27 19:00:54 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,18 @@ void	archive(void *ptr, struct stat buf, char *av)
 		jmp = ft_atoi(archive->ar_name + 3);
 		if (ft_strncmp((char *)(archive + 1), SYMDEF, 9))
 		{
-			if (!(aff = malloc(jmp + ft_strlen(av) + 3)))
+			if (!(aff = ft_memalloc(jmp + ft_strlen(av) + 5)))
 				return ;
 			ft_strcpy(aff, av);
 			ft_strcpy(aff + ft_strlen(av), "(");
 			ft_strcpy(aff + ft_strlen(av) + 1, (char *)(archive + 1));
 			*(aff + ft_strlen(av) + ft_strlen((char *)(archive + 1)) + 1) = ')';
-			*(aff + ft_strlen(av) + ft_strlen((char *)(archive + 1)) + 2) = 0;
 			magic(((char *)(archive + 1) + jmp), buf, aff, 3);
 			free(aff);
 		}
-		archive = (void *)archive + ft_atoi(archive->ar_size)
-			+ sizeof(struct ar_hdr);
+		if ((void *)(archive = (void *)archive + ft_atoi(archive->ar_size)
+			+ sizeof(struct ar_hdr)) - ptr > buf.st_size)
+			return ;
 	}
 }
 

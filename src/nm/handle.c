@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:14:54 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/31 15:57:00 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/06/27 18:51:42 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,16 @@ int			handle_32(void *ptr, struct stat buf, char *av, int pute)
 {
 	uint32_t				ncmds;
 	uint32_t				inc;
+	uint32_t				lc_inc;
 	struct load_command		*lc;
 
 	print(pute, av);
 	ncmds = endian4(((struct mach_header *)ptr)->ncmds);
-	lc = (void *)ptr + sizeof(struct mach_header);
+	lc_inc = sizeof(struct mach_header);
 	inc = -1;
 	while (++inc < ncmds)
 	{
+		lc = ptr + lc_inc;
 		if (endian4(lc->cmd) == LC_SEGMENT)
 		{
 			if (set_segment_32((struct segment_command *)lc, ptr))
@@ -58,8 +60,8 @@ int			handle_32(void *ptr, struct stat buf, char *av, int pute)
 		else if (endian4(lc->cmd) == LC_SYMTAB)
 			if (call_print((void *)lc, buf, ptr, print_output_sort_32))
 				return (EXIT_FAILURE);
-		if ((void *)(lc = (void *)lc + endian4(lc->cmdsize)) >
-				(buf.st_size + ptr))
+		lc_inc += endian4(lc->cmdsize);
+		if ((buf.st_size -= endian4(lc->cmdsize) * 4) <= 0)
 			return (handle_error("The file was not recognized as valid"));
 	}
 	return (EXIT_SUCCESS);
@@ -69,14 +71,16 @@ int			handle_64(void *ptr, struct stat buf, char *av, int pute)
 {
 	uint32_t				ncmds;
 	uint32_t				inc;
+	uint32_t				lc_inc;
 	struct load_command		*lc;
 
 	print(pute, av);
 	ncmds = endian4(((struct mach_header_64 *)ptr)->ncmds);
-	lc = (void *)ptr + sizeof(struct mach_header_64);
+	lc_inc = sizeof(struct mach_header_64);
 	inc = -1;
 	while (++inc < ncmds)
 	{
+		lc = ptr + lc_inc;
 		if (endian4(lc->cmd) == LC_SEGMENT_64)
 		{
 			if (set_segment_64((struct segment_command_64 *)lc, ptr))
@@ -85,8 +89,8 @@ int			handle_64(void *ptr, struct stat buf, char *av, int pute)
 		else if (endian4(lc->cmd) == LC_SYMTAB)
 			if (call_print((void *)lc, buf, ptr, print_output_sort_64))
 				return (EXIT_FAILURE);
-		if ((void *)(lc = (void *)lc + endian8(lc->cmdsize)) >
-				(buf.st_size + ptr))
+		lc_inc += endian8(lc->cmdsize);
+		if ((buf.st_size -= endian8(lc->cmdsize) * 4) <= 0)
 			return (handle_error("The file was not recognized as valid"));
 	}
 	return (EXIT_SUCCESS);

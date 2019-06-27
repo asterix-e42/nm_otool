@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:15:33 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/30 22:41:00 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/06/27 18:55:56 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,11 @@ void	nmotool_part(struct section_64 *section, int sect,
 	if (!ft_strcmp(section->segname, SEG_TEXT)
 			&& !ft_strcmp(section->sectname, SECT_TEXT))
 		section_leter[sect] = 'T';
-	else if (!ft_strcmp(section->segname, "__BSS")
-			&& !ft_strcmp(section->sectname, SECT_BSS))
+	else if (!ft_strcmp(section->sectname, SECT_BSS))
 		section_leter[sect] = 'B';
 	else if (!ft_strcmp(section->segname, SEG_DATA)
 			&& !ft_strcmp(section->sectname, SECT_DATA))
 		section_leter[sect] = 'D';
+	else
+		section_leter[sect] = '\0';
 }
