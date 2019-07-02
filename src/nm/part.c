@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:15:33 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/06/27 18:55:56 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/01 21:10:18 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ char	*get_segment(int reset)
 	return (section_letter);
 }
 
-void	nmotool_part(struct section_64 *section, int sect,
-		char *ptr, char is_64)
+int		nmotool_part(struct section_64 *section, int sect,
+		char *ptr, void *is_64)
 {
 	char			*section_leter;
 
@@ -49,4 +49,10 @@ void	nmotool_part(struct section_64 *section, int sect,
 		section_leter[sect] = 'D';
 	else
 		section_leter[sect] = '\0';
+	return (EXIT_SUCCESS);
+}
+
+int		is_nm(void)
+{
+	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:15:25 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/31 16:28:50 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/02 17:13:08 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ static void		print_output_64(int i, char *s_table, struct nlist_64 *tab)
 	ft_putendl(s_table + endian4(tab[i].n_un.n_strx));
 }
 
-int				print_output_sort_32(struct symtab_command *sym, char *ptr,
-				struct stat buf)
+int				print_output_sort_32(struct symtab_command *sym, char *ptr)
 {
 	int				i[3];
 	int				*tmp;
@@ -77,7 +76,7 @@ int				print_output_sort_32(struct symtab_command *sym, char *ptr,
 		i[1] = -1;
 		i[2] = 0;
 		while (++i[1] + i[0] < (int)endian4(sym->nsyms))
-			if (endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx) > buf.st_size)
+			if (god(ptr + endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx), 0))
 				return (handle_error("bad string index"));
 			else if (ft_strcmp(ptr + endian4(sym->stroff +
 			tab[tmp[i[1]]].n_un.n_strx),
@@ -90,8 +89,7 @@ int				print_output_sort_32(struct symtab_command *sym, char *ptr,
 	return (EXIT_SUCCESS);
 }
 
-int				print_output_sort_64(struct symtab_command *sym, char *ptr,
-				struct stat buf)
+int				print_output_sort_64(struct symtab_command *sym, char *ptr)
 {
 	int				i[3];
 	int				*tmp;
@@ -107,10 +105,10 @@ int				print_output_sort_64(struct symtab_command *sym, char *ptr,
 		i[1] = -1;
 		i[2] = 0;
 		while (++i[1] + i[0] < (int)endian4(sym->nsyms))
-			if (endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx) > buf.st_size)
+			if (god(ptr + endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx), 0))
 				return (handle_error("bad string index"));
 			else if (ft_strcmp(ptr + endian4(sym->stroff +
-			tab[tmp[i[1]]].n_un.n_strx),
+							tab[tmp[i[1]]].n_un.n_strx),
 			ptr + endian4(sym->stroff + tab[tmp[i[2]]].n_un.n_strx)) < 0)
 				i[2] = i[1];
 		print_output_64(tmp[i[2]], ptr + endian4(sym->stroff), tab);

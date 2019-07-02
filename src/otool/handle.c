@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:13:36 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/06/27 17:30:07 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/01 20:12:44 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,18 @@ int		handle_32(void *ptr, struct stat buf, char *av, int pute)
 	header = (struct mach_header *)ptr;
 	lc_inc = sizeof(*header);
 	inc = -1;
+	ft_putendl("handle begin");
 	while (++inc < endian4(header->ncmds))
 	{
 		lc = ptr + lc_inc;
 		if (endian4(lc->cmd) == LC_SEGMENT)
-			if (set_segment_32((struct segment_command *)lc, ptr))
+			if (set_segment_32((struct segment_command *)lc, ptr, &buf))
 				return (EXIT_FAILURE);
 		lc_inc += endian4(lc->cmdsize);
 		if ((buf.st_size -= endian4(lc->cmdsize) * 4) < 0)
 			return (EXIT_FAILURE);
 	}
+	ft_putendl("handle end");
 	return (EXIT_SUCCESS);
 }
 
@@ -63,7 +65,7 @@ int		handle_64(void *ptr, struct stat buf, char *av, int pute)
 	{
 		lc = ptr + lc_inc;
 		if (endian4(lc->cmd) == LC_SEGMENT_64)
-			if (set_segment_64((struct segment_command_64 *)lc, ptr))
+			if (set_segment_64((struct segment_command_64 *)lc, ptr, &buf))
 				return (EXIT_FAILURE);
 		lc_inc += endian4(lc->cmdsize);
 		if ((buf.st_size -= endian8(lc->cmdsize) * 4) < 0)

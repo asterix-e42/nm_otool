@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/06/27 19:00:54 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/02 17:45:25 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <ar.h>
 #include <mach-o/ranlib.h>
 
-void	archive(void *ptr, struct stat buf, char *av)
+int		archive(void *ptr, struct stat buf, char *av)
 {
 	struct ar_hdr	*archive;
 	int				jmp;
@@ -34,19 +34,17 @@ void	archive(void *ptr, struct stat buf, char *av)
 		jmp = ft_atoi(archive->ar_name + 3);
 		if (ft_strncmp((char *)(archive + 1), SYMDEF, 9))
 		{
-			if (!(aff = ft_memalloc(jmp + ft_strlen(av) + 5)))
-				return ;
-			ft_strcpy(aff, av);
-			ft_strcpy(aff + ft_strlen(av), "(");
-			ft_strcpy(aff + ft_strlen(av) + 1, (char *)(archive + 1));
-			*(aff + ft_strlen(av) + ft_strlen((char *)(archive + 1)) + 1) = ')';
-			magic(((char *)(archive + 1) + jmp), buf, aff, 3);
+			if (!(aff = archive_2(jmp, av, (void *)archive)))
+				return (EXIT_FAILURE);
+			if (magic(((char *)(archive + 1) + jmp), buf, aff, 3))
+				return (handle_error_free(aff));
 			free(aff);
 		}
 		if ((void *)(archive = (void *)archive + ft_atoi(archive->ar_size)
 			+ sizeof(struct ar_hdr)) - ptr > buf.st_size)
-			return ;
+			return (handle_error("error size no correct"));
 	}
+	return (EXIT_SUCCESS);
 }
 
 int		fat_32(void *ptr, struct stat buf, char *av)
@@ -68,7 +66,8 @@ int		fat_32(void *ptr, struct stat buf, char *av)
 		magic_ptr = (void *)ptr + endian4(arch->offset);
 		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64) &&
 		(temp = 1)) || !temp)
-			magic(magic_ptr, buf, av, 1);
+			if (magic(magic_ptr, buf, av, 1))
+				return (EXIT_FAILURE);
 		arch++;
 		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr ==
 		FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM ||
@@ -96,7 +95,8 @@ int		fat_64(void *ptr, struct stat buf, char *av)
 		magic_ptr = (void *)ptr + endian8(arch->offset);
 		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
 		&& (temp = 1)) || !temp)
-			magic(magic_ptr, buf, av, 1);
+			if (magic(magic_ptr, buf, av, 1))
+				return (EXIT_FAILURE);
 		arch++;
 		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr
 		== FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM
@@ -105,26 +105,28 @@ int		fat_64(void *ptr, struct stat buf, char *av)
 	return (EXIT_SUCCESS);
 }
 
-void	magic(void *ptr, struct stat buf, char *av, int pute)
+int		magic(void *ptr, struct stat buf, char *av, int pute)
 {
 	unsigned int			magic;
+	int						ret;
 
 	magic = *(int *)ptr;
 	endian_mode(magic == FAT_CIGAM || magic == FAT_CIGAM_64 || \
 			magic == MH_CIGAM || magic == MH_CIGAM_64);
 	if (!ft_strncmp(ARMAG, ptr, 8))
-		archive(ptr, buf, av);
+		ret = archive(ptr, buf, av);
 	else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
-		fat_64(ptr, buf, av);
+		ret = fat_64(ptr, buf, av);
 	else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
-		fat_32(ptr, buf, av);
+		ret = fat_32(ptr, buf, av);
 	else if (magic == MH_MAGIC || magic == MH_CIGAM)
-		handle_32(ptr, buf, av, pute);
+		ret = handle_32(ptr, buf, av, pute);
 	else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
-		handle_64(ptr, buf, av, pute);
+		ret = handle_64(ptr, buf, av, pute);
 	else
-		handle_error(("unknown file format"));
+		ret = handle_error(("unknown file format"));
 	get_number_segment(-1);
+	return (ret);
 }
 
 int		make_magic(char *filename, int pute)
@@ -140,7 +142,11 @@ int		make_magic(char *filename, int pute)
 	if ((ptr = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
 		return (handle_error("cannot allocated"));
+	if (*(ptr + buf.st_size - 1) != '\0' && *(ptr + buf.st_size - 1) != '\x0a')
+		return (handle_error("binary non valide"));
+	god(ptr + buf.st_size, 1);
 	magic(ptr, buf, filename, pute);
+	god(NULL, 1);
 	if (munmap(ptr, buf.st_size) < 0)
 		return (handle_error("cannot disallocated"));
 	if (get_segment(1) == NULL)
