@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/28 16:12:14 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/04/24 20:59:03 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 13:56:39 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ char	*ft_itoabase(unsigned long long int nb, char *b2)
 	size = 1;
 	while (tmp /= max)
 		++size;
-	ret = (char *)malloc(sizeof(char) * (size + 1));
+	if (!(ret = (char *)malloc(sizeof(char) * (size + 4))))
+		return (NULL);
 	*(ret + size) = '\0';
 	while (--size + 1)
 	{

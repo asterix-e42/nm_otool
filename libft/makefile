@@ -6,7 +6,7 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/05/31 16:22:55 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/07/03 14:13:01 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ SRCS =	memset bzero memcpy memccpy memmove memchr memcmp strlen strdup strcpy \
 		strequ strnequ strsub strjoin strtrim strsplit itoa putchar putstr \
 		putendl putnbr putaddr putchar_fd putstr_fd putendl_fd putnbr_fd \
 		isspace intlen power atoibase unsignedintlen erreur itoabase strcpt \
-		strndup stralloc strnjoin putchar_hex mallocf
+		strndup stralloc strnjoin putchar_hex mallocf putendl_alnum
 
 LST =	add.o new.o del.o delone.o iter.o map.o find.o addend.o findsize.o \
 		othernew.o count.o 

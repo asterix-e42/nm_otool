@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:15:25 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/02 17:13:08 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 15:22:09 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void		print_output_32(int i, char *stringtable, struct nlist *tab)
 	ft_putstr(" ");
 	ft_putchar(symbol);
 	ft_putstr(" ");
-	ft_putendl(stringtable + endian4(tab[i].n_un.n_strx));
+	ft_putendl_alnum(stringtable + endian4(tab[i].n_un.n_strx));
 }
 
 static void		print_output_64(int i, char *s_table, struct nlist_64 *tab)
@@ -57,7 +57,7 @@ static void		print_output_64(int i, char *s_table, struct nlist_64 *tab)
 	ft_putchar(' ');
 	ft_putchar(symbol);
 	ft_putchar(' ');
-	ft_putendl(s_table + endian4(tab[i].n_un.n_strx));
+	ft_putendl_alnum(s_table + endian4(tab[i].n_un.n_strx));
 }
 
 int				print_output_sort_32(struct symtab_command *sym, char *ptr)
@@ -77,7 +77,7 @@ int				print_output_sort_32(struct symtab_command *sym, char *ptr)
 		i[2] = 0;
 		while (++i[1] + i[0] < (int)endian4(sym->nsyms))
 			if (god(ptr + endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx), 0))
-				return (handle_error("bad string index"));
+				return (handle_error_free((void *)tmp));
 			else if (ft_strcmp(ptr + endian4(sym->stroff +
 			tab[tmp[i[1]]].n_un.n_strx),
 			ptr + endian4(sym->stroff + tab[tmp[i[2]]].n_un.n_strx)) < 0)
@@ -108,7 +108,7 @@ int				print_output_sort_64(struct symtab_command *sym, char *ptr)
 			if (god(ptr + endian4(sym->stroff + tab[tmp[i[1]]].n_un.n_strx), 0))
 				return (handle_error("bad string index"));
 			else if (ft_strcmp(ptr + endian4(sym->stroff +
-							tab[tmp[i[1]]].n_un.n_strx),
+			tab[tmp[i[1]]].n_un.n_strx),
 			ptr + endian4(sym->stroff + tab[tmp[i[2]]].n_un.n_strx)) < 0)
 				i[2] = i[1];
 		print_output_64(tmp[i[2]], ptr + endian4(sym->stroff), tab);

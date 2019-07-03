@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/02 17:45:25 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 14:47:26 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int		archive(void *ptr, struct stat buf, char *av)
 	int				i;
 	char			*aff;
 
+	aff = NULL;
 	i = -1;
 	archive = ptr + SARMAG;
 	while (*(char *)archive && (++i >= 0))
@@ -134,6 +135,7 @@ int		make_magic(char *filename, int pute)
 	int			fd;
 	struct stat	buf;
 	char		*ptr;
+	int			ret;
 
 	if ((fd = open(filename, O_RDONLY)) < 0)
 		return (handle_error("file doesn't exist"));
@@ -145,11 +147,11 @@ int		make_magic(char *filename, int pute)
 	if (*(ptr + buf.st_size - 1) != '\0' && *(ptr + buf.st_size - 1) != '\x0a')
 		return (handle_error("binary non valide"));
 	god(ptr + buf.st_size, 1);
-	magic(ptr, buf, filename, pute);
+	ret = magic(ptr, buf, filename, pute);
 	god(NULL, 1);
 	if (munmap(ptr, buf.st_size) < 0)
 		return (handle_error("cannot disallocated"));
 	if (get_segment(1) == NULL)
-		return (EXIT_SUCCESS);
+		return (ret);
 	return (EXIT_FAILURE);
 }

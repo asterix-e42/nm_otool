@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   ft_putendl_alnum.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/07 05:53:57 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 14:12:04 by tdumouli         ###   ########.fr       */
+/*   Created: 2019/07/03 14:10:49 by tdumouli          #+#    #+#             */
+/*   Updated: 2019/07/03 14:16:00 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <unistd.h>
 
-int		ft_isalnum(int c)
+void	ft_putendl_alnum(const char *s)
 {
-	return ((ft_isalpha(c) || ft_isdigit(c)));
+	int i;
+
+	if (!s)
+		return ;
+	i = -1;
+	while (*(s + ++i) && *(s + i) != '\n')
+	{
+		write(1, s + i, 1);
+	}
+	write(1, "\n", 1);
 }

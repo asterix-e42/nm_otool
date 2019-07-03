@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/02 17:26:26 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/02 17:43:05 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 15:20:09 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,17 @@ char	*archive_2(int32_t jmp, char *av, char *archive)
 {
 	char *aff;
 
-	if (!(aff = ft_memalloc(jmp + ft_strlen(av) + 5)))
+	if (sizeof(struct ar_hdr) > (uint32_t)jmp)
+	{
+		handle_error("name too long, not correspond");
+		return (NULL);
+	}
+	if (!(aff = ft_memalloc(jmp + ft_strlen(av) + 16)))
 		return (NULL);
 	ft_strcpy(aff, av);
 	ft_strcpy(aff + ft_strlen(av), "(");
-	ft_strcpy(aff + ft_strlen(av) + 1, (archive + sizeof(struct ar_hdr)));
+	ft_strcpy(aff + ft_strlen(av) + 1, archive + sizeof(struct ar_hdr) + 1);
 	*(aff + ft_strlen(av)
-	+ ft_strlen((archive + sizeof(struct ar_hdr))) + 1) = ')';
+		+ ft_strlen((archive + sizeof(struct ar_hdr))) + 0) = ')';
 	return (aff);
 }

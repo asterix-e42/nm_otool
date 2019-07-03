@@ -6,11 +6,12 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:23 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/30 22:16:25 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 14:45:35 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm_otool.h"
+#include "libft.h"
 
 int		main(int ac, char **av)
 {
@@ -18,6 +19,8 @@ int		main(int ac, char **av)
 		make_magic("./a.out", 0);
 	else
 		while (*++av)
+		{
 			make_magic(*av, ac);
+		}
 	return (0);
 }

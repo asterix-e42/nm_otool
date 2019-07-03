@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/07 05:36:48 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/31 16:25:12 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 14:13:29 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void			ft_putchar_hex(char c);
 void			ft_putaddr(void *nb, char *b);
 void			ft_putstr(char const *s);
 void			ft_putendl(char const *s);
+void			ft_putendl_alnum(char const *s);
 void			ft_putnbr(int n);
 void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char const *s, int fd);

@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 02:19:19 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/02 17:14:06 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 14:46:21 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	putnb_32(uint32_t *number, char *str)
 	uint64_t		n;
 
 	n = 0 + *number;
-	ret = ft_itoabase(n, "0123456789abcdef");
+	if (!(ret = ft_itoabase(n, "0123456789abcdef")))
+		return ;
 	write(1, "0000000000000000", 8 - ft_strlen(ret));
 	ft_putstr(ret);
 	ft_putstr(str);
@@ -32,7 +33,8 @@ void	putnb(uint64_t *number, char *str, char is_64)
 {
 	char			*ret;
 
-	ret = ft_itoabase(*number, "0123456789abcdef");
+	if (!(ret = ft_itoabase(*number, "0123456789abcdef")))
+		return ;
 	write(1, "0000000000000000", 16 - is_64 - ft_strlen(ret));
 	ft_putstr(ret);
 	ft_putstr(str);

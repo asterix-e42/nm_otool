@@ -6,12 +6,14 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 17:29:04 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/30 17:37:05 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 12:14:34 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+
 char	*get_segment(int reset)
 {
-	reset = 0;
+	(void)reset;
 	return ((void *)0);
 }
