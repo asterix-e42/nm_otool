@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:13:36 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 12:19:25 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/03 17:28:44 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int		handle_64(void *ptr, struct stat buf, char *av, int pute)
 				return (EXIT_FAILURE);
 		lc_inc += endian4(lc->cmdsize);
 		if ((buf.st_size -= endian8(lc->cmdsize) * 4) < 0)
-			return (handle_error("The file was not recognized as valid"));
+			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
