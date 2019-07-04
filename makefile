@@ -6,14 +6,14 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/07/02 17:23:01 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/07/04 13:24:34 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 AUTEUR = "tdumouli"
 NAMEI =
-NAME_NM = nm
-NAME_OTOOL = otool
+NAME_NM = ft_nm
+NAME_OTOOL = ft_otool
 OBJDIR = ./objet
 SRCDIR = ./src
 INCDIR = -I./include -I./libft/include
