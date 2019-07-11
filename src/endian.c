@@ -6,11 +6,12 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:02 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/05/30 22:16:06 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/11 16:29:14 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm_otool.h"
+#include "libft.h"
 
 static char	g_endian = 0;
 

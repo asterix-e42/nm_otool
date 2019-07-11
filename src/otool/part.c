@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:15:44 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 12:19:49 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/10 14:29:18 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int		print_otool_32(char *ptr, struct section *section, struct stat buf)
 		return (EXIT_FAILURE);
 	while (i < endian4(section->size))
 	{
-		if ((uint64_t)buf.st_size < (endian4(section->offset) + i) * 4)
+		if ((uint64_t)buf.st_size < (endian4(section->offset) + i))
 			return (EXIT_FAILURE);
 		if (!(i & 15))
 		{
@@ -80,8 +80,7 @@ int		print_otool_32(char *ptr, struct section *section, struct stat buf)
 
 int		nmotool_part(struct section_64 *section, int is_64, char *ptr, void *b)
 {
-	if (!ft_strcmp(section->segname, "__TEXT")
-			&& !ft_strcmp(section->sectname, "__text"))
+	if (!ft_strcmp(section->sectname, "__text"))
 	{
 		print_content(section);
 		if (!is_64)
@@ -89,11 +88,9 @@ int		nmotool_part(struct section_64 *section, int is_64, char *ptr, void *b)
 		else
 			return (print_otool_32(ptr, (void *)section, *(struct stat *)b));
 	}
-	else if (!ft_strcmp(section->segname, "__BSS")
-			&& !ft_strcmp(section->sectname, "__bss"))
+	else if (!ft_strcmp(section->sectname, "__bss"))
 		;
-	else if (!ft_strcmp(section->segname, "__DATA")
-			&& !ft_strcmp(section->sectname, "__data"))
+	else if (!ft_strcmp(section->sectname, "__data"))
 		;
 	return (EXIT_SUCCESS);
 }

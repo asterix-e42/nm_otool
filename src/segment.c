@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 02:19:19 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 14:46:21 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/11 19:39:58 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int		set_segment_32(struct segment_command *segment, void *ptr, void *b)
 	i = -1;
 	while (++i < (int)endian4(segment->nsects) && !ret)
 	{
-		if (i > 10)
+		if (i > 20)
 			return (EXIT_FAILURE);
 		if (is_nm())
 			ret = nmotool_part((void *)sec, i + merde, ptr, NULL);
@@ -94,7 +94,7 @@ int		set_segment_64(struct segment_command_64 *segment, void *ptr, void *b)
 	i = -1;
 	while (++i < (int)endian4(segment->nsects) && !ret)
 	{
-		if (i > 10)
+		if (i > 20)
 			return (EXIT_FAILURE);
 		if (is_nm())
 			ret = nmotool_part((void *)sec, i + merde, ptr, NULL);

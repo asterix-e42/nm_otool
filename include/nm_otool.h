@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 01:48:05 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/02 17:45:27 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/11 19:06:49 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ int			magic(void *ptr, struct stat buf, char *av, int pute);
 int			is_nm(void);
 int			god(void *ptr, int reset);
 char		*archive_2(int32_t jmp, char *av, char *archive);
+int8_t		is_arch(int is);
 
 #endif

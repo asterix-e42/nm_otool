@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 14:47:26 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/12 01:24:33 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int		archive(void *ptr, struct stat buf, char *av)
 				return (EXIT_FAILURE);
 			if (magic(((char *)(archive + 1) + jmp), buf, aff, 3))
 				return (handle_error_free(aff));
+			is_arch(1);
 			free(aff);
 		}
 		if ((void *)(archive = (void *)archive + ft_atoi(archive->ar_size)
@@ -54,26 +55,25 @@ int		fat_32(void *ptr, struct stat buf, char *av)
 	uint32_t			*magic_ptr;
 	uint32_t			inc;
 	size_t				target_offset;
-	char				temp;
 
 	inc = -1;
-	temp = 0;
 	target_offset = 0;
 	arch = ptr + sizeof(struct fat_header);
 	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
 	{
+		magic_ptr = ptr + endian4(arch->offset);
 		if (endian4(arch->offset) == 0)
 			return (handle_error("error offset"));
-		magic_ptr = (void *)ptr + endian4(arch->offset);
-		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64) &&
-		(temp = 1)) || !temp)
-			if (magic(magic_ptr, buf, av, 1))
-				return (EXIT_FAILURE);
+		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
+	|| (!target_offset && (*magic_ptr == MH_CIGAM || *magic_ptr == MH_MAGIC)))
+			target_offset = endian4(arch->offset);
 		arch++;
 		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr ==
 		FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM ||
 		*(uint32_t *)ptr == MH_CIGAM_64);
 	}
+	if (!target_offset || magic(ptr + target_offset, buf, av, 1))
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -83,26 +83,25 @@ int		fat_64(void *ptr, struct stat buf, char *av)
 	uint64_t			*magic_ptr;
 	uint32_t			inc;
 	size_t				target_offset;
-	char				temp;
 
 	inc = -1;
-	temp = 0;
 	target_offset = 0;
 	arch = ptr + sizeof(struct fat_header);
 	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
 	{
+		magic_ptr = ptr + endian8(arch->offset);
 		if (endian8(arch->offset) == 0)
 			return (handle_error("error offset"));
-		magic_ptr = (void *)ptr + endian8(arch->offset);
-		if (((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
-		&& (temp = 1)) || !temp)
-			if (magic(magic_ptr, buf, av, 1))
-				return (EXIT_FAILURE);
+		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
+	|| (!target_offset && (*magic_ptr == MH_CIGAM || *magic_ptr == MH_MAGIC)))
+			target_offset = endian8(arch->offset);
 		arch++;
 		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr
 		== FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM
 		|| *(uint32_t *)ptr == MH_CIGAM_64);
 	}
+			if (magic(ptr + target_offset, buf, av, 1))
+				return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

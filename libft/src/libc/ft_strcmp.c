@@ -6,11 +6,13 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/03 17:55:32 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/03 14:05:05 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/11 18:08:18 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		ft_strcmp(unsigned char *s1, unsigned char *s2)
+#include "libft.h"
+
+int		ft_strcmp(char *s1, char *s2)
 {
 	int		i;
 
