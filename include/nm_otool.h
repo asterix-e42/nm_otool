@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 01:48:05 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/11 19:06:49 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/13 01:14:00 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int			handle_64(void *ptr, struct stat buf, char *av, int pute);
 int			handle_32(void *ptr, struct stat buf, char *av, int pute);
 char		get_symbol_letter_32(struct nlist array);
 char		get_symbol_letter_64(struct nlist_64 array);
-void		endian_mode(char is_endian);
+void		endian_mode(uint32_t is_endian);
 uint16_t	endian2(uint16_t nb);
 uint32_t	endian4(uint32_t nb);
 uint64_t	endian8(uint64_t nb);
@@ -47,7 +47,7 @@ int			get_number_segment(int n);
 int			magic(void *ptr, struct stat buf, char *av, int pute);
 int			is_nm(void);
 int			god(void *ptr, int reset);
-char		*archive_2(int32_t jmp, char *av, char *archive);
+int			archive(void *ptr, struct stat buf, char *av);
 int8_t		is_arch(int is);
 
 #endif

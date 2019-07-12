@@ -6,7 +6,7 @@
 #    By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/08 16:51:40 by tdumouli          #+#    #+#              #
-#    Updated: 2019/07/04 13:24:34 by tdumouli         ###   ########.fr        #
+#    Updated: 2019/07/13 01:23:27 by tdumouli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,8 +19,8 @@ SRCDIR = ./src
 INCDIR = -I./include -I./libft/include
 
 
-NM_OTOOL = error.o segment.o mach_o.o main.o endian.o fct_ult.o
-NM = handle.o output.o part.o get_symbol_letter.o
+NM_OTOOL = error.o segment.o mach_o.o main.o endian.o archive.o
+NM = handle.o output_32.o output_64.o part.o get_symbol_letter.o
 OTOOL = handle.o part.o nm.o
 LIB = libft/libft.a
 

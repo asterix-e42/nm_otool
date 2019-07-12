@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:02 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/11 16:29:14 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/13 01:24:54 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 
 static char	g_endian = 0;
 
-void		endian_mode(char is_endian)
+void		endian_mode(uint32_t is_endian)
 {
-	g_endian = is_endian;
+	g_endian = (is_endian == FAT_CIGAM || is_endian == FAT_CIGAM_64 || \
+				is_endian == MH_CIGAM || is_endian == MH_CIGAM_64);
 }
 
 uint16_t	endian2(uint16_t nb)

@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/12 01:24:33 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/13 01:19:45 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,39 +20,16 @@
 #include <ar.h>
 #include <mach-o/ranlib.h>
 
-int		archive(void *ptr, struct stat buf, char *av)
+static inline int	it_is_fat_magic(uint32_t magic, size_t target)
 {
-	struct ar_hdr	*archive;
-	int				jmp;
-	int				i;
-	char			*aff;
-
-	aff = NULL;
-	i = -1;
-	archive = ptr + SARMAG;
-	while (*(char *)archive && (++i >= 0))
-	{
-		jmp = ft_atoi(archive->ar_name + 3);
-		if (ft_strncmp((char *)(archive + 1), SYMDEF, 9))
-		{
-			if (!(aff = archive_2(jmp, av, (void *)archive)))
-				return (EXIT_FAILURE);
-			if (magic(((char *)(archive + 1) + jmp), buf, aff, 3))
-				return (handle_error_free(aff));
-			is_arch(1);
-			free(aff);
-		}
-		if ((void *)(archive = (void *)archive + ft_atoi(archive->ar_size)
-			+ sizeof(struct ar_hdr)) - ptr > buf.st_size)
-			return (handle_error("error size no correct"));
-	}
-	return (EXIT_SUCCESS);
+	return ((magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
+	|| (!target && (magic == MH_CIGAM || magic == MH_MAGIC)));
 }
 
-int		fat_32(void *ptr, struct stat buf, char *av)
+int					fat_32(void *ptr, struct stat buf, char *av)
 {
 	struct fat_arch		*arch;
-	uint32_t			*magic_ptr;
+	struct mach_header	*mptr;
 	uint32_t			inc;
 	size_t				target_offset;
 
@@ -61,75 +38,78 @@ int		fat_32(void *ptr, struct stat buf, char *av)
 	arch = ptr + sizeof(struct fat_header);
 	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
 	{
-		magic_ptr = ptr + endian4(arch->offset);
+		if (god(mptr = ptr + endian4(arch->offset), 0))
+			return (handle_error("truncated or malformed fat32 file"));
+		if ((mptr->cputype % 0x100) != CPU_TYPE_I386)
+			continue ;
 		if (endian4(arch->offset) == 0)
 			return (handle_error("error offset"));
-		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
-	|| (!target_offset && (*magic_ptr == MH_CIGAM || *magic_ptr == MH_MAGIC)))
+		if (it_is_fat_magic(mptr->magic, target_offset))
 			target_offset = endian4(arch->offset);
+		if (it_is_fat_magic(mptr->magic, target_offset) && (mptr->filetype - 6))
+			break ;
 		arch++;
-		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr ==
-		FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM ||
-		*(uint32_t *)ptr == MH_CIGAM_64);
 	}
-	if (!target_offset || magic(ptr + target_offset, buf, av, 1))
+	if (!target_offset)
+		return (handle_error("no arch know"));
+	return (magic(ptr + target_offset, buf, av, 1));
+}
+
+int					fat_64(void *ptr, struct stat buf, char *av)
+{
+	struct fat_arch_64	*arch;
+	struct mach_header	*mptr;
+	uint32_t			inc;
+	size_t				target_offset;
+
+	inc = -1;
+	target_offset = 0;
+	arch = ptr + sizeof(struct fat_header);
+	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
+	{
+		if (god(mptr = ptr + endian8(arch->offset), 0))
+			return (handle_error("truncated or malformed fat64 file"));
+		if ((mptr->cputype % 0x100) != CPU_TYPE_I386)
+			continue ;
+		if (endian8(arch->offset) == 0)
+			return (handle_error("error offset"));
+		if (it_is_fat_magic(mptr->magic, target_offset))
+			target_offset = endian8(arch->offset);
+		if (it_is_fat_magic(mptr->magic, target_offset) && (mptr->filetype - 6))
+			break ;
+		arch++;
+	}
+	if (magic(ptr + target_offset, buf, av, 1))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
-int		fat_64(void *ptr, struct stat buf, char *av)
+int					magic(void *ptr, struct stat buf, char *av, int pute)
 {
-	struct fat_arch_64	*arch;
-	uint64_t			*magic_ptr;
-	uint32_t			inc;
-	size_t				target_offset;
+	uint32_t				*magic;
+	int32_t					ret;
 
-	inc = -1;
-	target_offset = 0;
-	arch = ptr + sizeof(struct fat_header);
-	while (++inc < endian4(((struct fat_header *)ptr)->nfat_arch))
-	{
-		magic_ptr = ptr + endian8(arch->offset);
-		if (endian8(arch->offset) == 0)
-			return (handle_error("error offset"));
-		if ((*(magic_ptr) == MH_MAGIC_64 || *magic_ptr == MH_CIGAM_64)
-	|| (!target_offset && (*magic_ptr == MH_CIGAM || *magic_ptr == MH_MAGIC)))
-			target_offset = endian8(arch->offset);
-		arch++;
-		endian_mode(*(uint32_t *)ptr == FAT_CIGAM || *(uint32_t *)ptr
-		== FAT_CIGAM_64 || *(uint32_t *)ptr == MH_CIGAM
-		|| *(uint32_t *)ptr == MH_CIGAM_64);
-	}
-			if (magic(ptr + target_offset, buf, av, 1))
-				return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
-
-int		magic(void *ptr, struct stat buf, char *av, int pute)
-{
-	unsigned int			magic;
-	int						ret;
-
-	magic = *(int *)ptr;
-	endian_mode(magic == FAT_CIGAM || magic == FAT_CIGAM_64 || \
-			magic == MH_CIGAM || magic == MH_CIGAM_64);
+	magic = (uint32_t *)ptr;
+	endian_mode(*magic);
+	is_arch((*(magic + 3)) == 1);
 	if (!ft_strncmp(ARMAG, ptr, 8))
 		ret = archive(ptr, buf, av);
-	else if (magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
+	else if (*magic == FAT_MAGIC_64 || *magic == FAT_CIGAM_64)
 		ret = fat_64(ptr, buf, av);
-	else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
+	else if (*magic == FAT_MAGIC || *magic == FAT_CIGAM)
 		ret = fat_32(ptr, buf, av);
-	else if (magic == MH_MAGIC || magic == MH_CIGAM)
+	else if (*magic == MH_MAGIC || *magic == MH_CIGAM)
 		ret = handle_32(ptr, buf, av, pute);
-	else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
+	else if (*magic == MH_MAGIC_64 || *magic == MH_CIGAM_64)
 		ret = handle_64(ptr, buf, av, pute);
 	else
 		ret = handle_error(("unknown file format"));
+	is_arch((*(magic + 3)) == 1);
 	get_number_segment(-1);
 	return (ret);
 }
 
-int		make_magic(char *filename, int pute)
+int					make_magic(char *filename, int pute)
 {
 	int			fd;
 	struct stat	buf;
