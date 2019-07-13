@@ -6,7 +6,7 @@
 /*   By: tdumouli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/30 22:16:16 by tdumouli          #+#    #+#             */
-/*   Updated: 2019/07/13 01:19:45 by tdumouli         ###   ########.fr       */
+/*   Updated: 2019/07/13 15:21:12 by tdumouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int					fat_32(void *ptr, struct stat buf, char *av)
 	{
 		if (god(mptr = ptr + endian4(arch->offset), 0))
 			return (handle_error("truncated or malformed fat32 file"));
-		if ((mptr->cputype % 0x100) != CPU_TYPE_I386)
+		if ((mptr->cputype % 0x100) != CPU_TYPE_I386 && ++arch)
 			continue ;
 		if (endian4(arch->offset) == 0)
 			return (handle_error("error offset"));
@@ -69,7 +69,7 @@ int					fat_64(void *ptr, struct stat buf, char *av)
 	{
 		if (god(mptr = ptr + endian8(arch->offset), 0))
 			return (handle_error("truncated or malformed fat64 file"));
-		if ((mptr->cputype % 0x100) != CPU_TYPE_I386)
+		if ((mptr->cputype % 0x100) != CPU_TYPE_I386 && ++arch)
 			continue ;
 		if (endian8(arch->offset) == 0)
 			return (handle_error("error offset"));
